@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Covid-19 Natural Language Processing</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+
+	<style>
+		body{
+			padding: 0;
+			font-family: Comic Sans MS;
+			background-color: #AB8606;
+
+		}
+		.header{
+			width: 100%;
+			background-color: maroon;
+			margin-top: -30px;
+			padding: 3px;
+		}
+		.header p{
+			color: white;
+			font-size: 3em;
+			text-align: center;
+			font-weight: bold;
+		}
+		.otbl{
+			background-color: black;
+		}
+		.otbl td{
+			color: white;
+			padding: 10px;
+			font-size: 1.2em;
+			text-align: center;
+			cursor: pointer;
+		}
+		.otbl td:hover{
+			color: #F3F54A;
+			font-weight: bold;
+		}
+		#questionbar, #questionbar2{
+			margin: auto;
+			text-align: center;
+		}
+		#questionbar input, #questionbar2 input{
+			width: 60%;
+			margin-top: 30px;
+			padding: 30px;
+			border-radius: 20px;
+			border: none;
+			font-size: 1.3em;
+			background-color: #E2E2C7;
+		}
+		#questionbar button, #questionbar2 button{
+			background-color: maroon;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			width: 20%;
+			padding: 5px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border: none; 
+			border-radius: 10px;
+			margin-top: 7px;
+			font-size: 20px;
+		}
+		#questionbar button:hover, #questionbar2 button:hover{
+			color: #F3F54A;
+			background-color: black;
+		}
+		#answer{
+			width: 70%;
+			margin: auto;
+			margin-top: 40px;
+			font-weight: bold;
+			font-size: 18px;
+		}
+		#articles, #articles2{
+			width: 60%;
+			margin: auto;
+		}
+		#atitle{
+			font-weight: bold;
+			font-size: 30px;
+			text-align: center;
+			border-bottom: 2px solid black;
+			padding-bottom: 5px;
+		}
+		#stats{
+			background-color: maroon
+		}
+		#stats td{
+			text-align: center;
+		}
+		#vote1{
+			color: white;
+			font-size: 30px;
+			font-weight: bold;
+		}
+		#vote2{
+			color: black;
+			font-size: 30px;
+			font-weight: bold;
+		}
+		#rev{
+			color: #F3F54A;
+			cursor: pointer;
+		}
+		#rev a{
+			text-decoration: none;
+			color: #F3F54A;
+		}
+		#reviewbox{
+			width: 60%;
+			background-color: black;
+			padding: 0px 40px 40px 40px;
+			text-align: center;
+			border-radius: 10px;
+			position: absolute;
+			top: 230px;
+			left: 17%;
+			display: none;
+		}
+		#reviewbox input{
+			width: 80%;
+			padding: 30px;
+			margin-top: 30px;
+			border-radius: 20px;
+			font-size: 1.3em;
+			background-color: black;
+			color: white;
+		}
+		#but1{
+			background-color: maroon;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			
+			padding: 10px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border: none; 
+			border-radius: 10px;
+			margin-top: 7px;
+			font-size: 20px;
+		}
+		#close{
+			margin-left: 102%;
+			cursor: pointer;
+			font-weight: bold;
+		}
+		#pos{
+			color: white;
+			font-size: 25px;
+			font-weight: bold;
+			color: #F3F54A;
+		}
+		#msg{
+			color: white;
+		}
+		a{
+			text-decoration: none;
+			color: maroon;
+			font-weight: bold;
+			font-size: 20px;
+		}
+		a:hover{
+			color: white;
+		}
+		#questionbar2, #articles2{
+			display: none;
+		}
+		#tab1{
+			color: #F3F54A;
+		}
+		#item1, #item2, #item3, #item4, #item5, #item6, #item7,#qitem1, #qitem2, #qitem3, #qitem4, #qitem5, #qitem6, #qitem7{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+
+<script>
+function showReview(x) {
+	if (x==1) {
+		document.getElementById("reviewbox").style.display = "block";
+	}else{
+		document.getElementById("reviewbox").style.display = "none";
+	}
+}
+
+function showarticle(){
+	document.getElementById("questionbar").style.display = "none";
+	document.getElementById("articles").style.display = "none";
+	document.getElementById("answer").style.display = "none";
+
+	document.getElementById("questionbar2").style.display = "block";
+	document.getElementById("articles2").style.display = "block";
+
+	document.getElementById("tab2").style.color="#F3F54A";
+	document.getElementById("tab1").style.color="white";
+
+}
+
+
+function showquery(){
+	document.getElementById("questionbar2").style.display = "none";
+	document.getElementById("articles2").style.display = "none";
+	
+	document.getElementById("answer").style.display = "block";
+	document.getElementById("questionbar").style.display = "block";
+	document.getElementById("articles").style.display = "block";
+
+	document.getElementById("tab1").style.color="#F3F54A";
+	document.getElementById("tab2").style.color="white";
+}
+
+function hideReview() {
+  document.getElementById("reviewbox").style.display = "none";
+}
+
+
+</script>
+
+<div class="header">
+	<p>Covid-19 Assistant</p> 
+</div>
+
+<div id="options">
+	<table width="100%" class="otbl">
+		<tr>
+			<td onclick="showquery()" id="tab1">Ask Queries</td>
+			<td onclick="showarticle()" id="tab2">Visit Articles</td>
+			<td onclick="showReview(1)">Leave a Review</td>
+		</tr>
+	</table>
+</div>
+
+<div id="questionbar">
+	<form method="POST" action="{{ url_for('predict1')}}">
+		<input type="text" name="ques" placeholder="Enter Your Query Here..."><br>
+		<button type="submit">Go</button>
+	</form>
+</div>
+
+<div id="answer">
+	<p>{{ chatbot_ans }}</p>
+	<!--<script>
+		function decode_utf8(s) {
+   			decs = decodeURIComponent(escape(s));
+   			document.getElementById("answer").innerHTML = "<p>"+decs+"</p>";
+		}
+		decode_utf8({{ chatbot_ans }});
+	</script>-->
+</div>
+
+<div id="articles">
+	<p id="atitle">Related Articles:</p>
+	<p id="qitem1"><a href="{{ url_for('nutrition') }}">Recommended Nutrition during Covid-19</a></p>
+	<p id="qitem2"><a href="{{ url_for('education') }}">Impact of Covid-19 on the Education System</a></p>
+	<p id="qitem3"><a href="{{ url_for('economy') }}">Impact of Covid-19 on Indian Economy</a></p>
+	<p id="qitem4"><a href="{{ url_for('origin') }}">History and Origin of the Corona Virus</a></p>
+	<p id="qitem5"><a href="{{ url_for('symptoms') }}">Symptoms and Precautions of Covid-19</a></p>
+	<p id="qitem6"><a href="{{ url_for('entertainment') }}">Recreation and Entertainment during LockDown</a></p>
+	<p id="qitem7"><a href="{{ url_for('fitness') }}">Exercise and Fitness from Home</a></p>
+
+	<script>
+		function displaytitlesforques(){
+			if ({{ nutrition1 }} == true){
+				document.getElementById("qitem1").style.display="block";
+			}else if ({{ nutrition1 }}==false) {
+				document.getElementById("qitem1").style.display="none";
+			}
+
+			if ({{ education1 }} == true){
+				document.getElementById("qitem2").style.display="block";
+			}else if ({{ education1 }}==false) {
+				document.getElementById("qitem2").style.display="none";
+			}
+
+			if ({{ economy1 }} == true){
+				document.getElementById("qitem3").style.display="block";
+			}else if ({{ economy1 }}==false) {
+				document.getElementById("qitem3").style.display="none";
+			}
+
+			if ({{ entertainment1 }} == true){
+				document.getElementById("qitem6").style.display="block";
+			}else if ({{ entertainment1 }}==false) {
+				document.getElementById("qitem6").style.display="none";
+			}
+
+			if ({{ fitness1 }} == true){
+				document.getElementById("qitem7").style.display="block";
+			}else if ({{ fitness1 }}==false) {
+				document.getElementById("qitem7").style.display="none";
+			}
+
+			if ({{ origin1 }} == true){
+				document.getElementById("qitem4").style.display="block";
+			}else if ({{ origin1 }}==false) {
+				document.getElementById("qitem4").style.display="none";
+			}
+
+			if ({{ symptoms1 }} == true){
+				document.getElementById("qitem5").style.display="block";
+			}else if ({{ symptoms1 }}==false) {
+				document.getElementById("qitem5").style.display="none";
+			}
+
+		}
+
+		displaytitlesforques();
+		showquery();
+	</script>
+</div>
+
+
+
+<div id="questionbar2">
+	<form method="POST" action="{{ url_for('search')}}">
+		<input type="text" name="query" placeholder="Search Articles Here..."><br>
+		<button type="submit">Search</button>
+	</form>
+</div>
+ 
+<div id="articles2">
+	<p id="atitle">Related Articles:</p>
+	
+	<p id="item1"><a href="{{ url_for('nutrition') }}">Recommended Nutrition during Covid-19</a></p>
+	<p id="item2"><a href="{{ url_for('education') }}">Impact of Covid-19 on the Education System</a></p>
+	<p id="item3"><a href="{{ url_for('economy') }}">Impact of Covid-19 on Indian Economy</a></p>
+	<p id="item4"><a href="{{ url_for('origin') }}">History and Origin of the Corona Virus</a></p>
+	<p id="item5"><a href="{{ url_for('symptoms') }}">Symptoms and Precautions of Covid-19</a></p>
+	<p id="item6"><a href="{{ url_for('entertainment') }}">Recreation and Entertainment during LockDown</a></p>
+	<p id="item7"><a href="{{ url_for('fitness') }}">Exercise and Fitness from Home</a></p>
+
+
+	<script>
+		function displaytitles(){
+			if ({{ nutrition }} == true){
+				document.getElementById("item1").style.display="block";
+			}else if ({{ nutrition }}==false) {
+				document.getElementById("item1").style.display="none";
+			}
+
+			if ({{ education }} == true){
+				document.getElementById("item2").style.display="block";
+			}else if ({{ education }}==false) {
+				document.getElementById("item2").style.display="none";
+			}
+
+			if ({{ economy }} == true){
+				document.getElementById("item3").style.display="block";
+			}else if ({{ economy }}==false) {
+				document.getElementById("item3").style.display="none";
+			}
+
+			if ({{ entertainment }} == true){
+				document.getElementById("item6").style.display="block";
+			}else if ({{ entertainment }}==false) {
+				document.getElementById("item6").style.display="none";
+			}
+
+			if ({{ fitness }} == true){
+				document.getElementById("item7").style.display="block";
+			}else if ({{ fitness }}==false) {
+				document.getElementById("item7").style.display="none";
+			}
+
+			if ({{ origin }} == true){
+				document.getElementById("item4").style.display="block";
+			}else if ({{ origin }}==false) {
+				document.getElementById("item4").style.display="none";
+			}
+
+			if ({{ symptoms }} == true){
+				document.getElementById("item5").style.display="block";
+			}else if ({{ symptoms }}==false) {
+				document.getElementById("item5").style.display="none";
+			}
+
+		}
+
+		displaytitles();
+		showarticle();
+	</script>
+</div>
+
+
+
+
+
+
+
+<div id="stats">
+	<table width="100%">
+		<tr>
+			<td>
+				<p id="vote1">{{ pos }} UpVotes</p>
+				<p id="rev"><a href="{{ url_for('fetchpositive') }}">View Reviews</a></p>
+			</td>
+			<td>
+				<p id="vote2">{{ neg }} DownVotes</p>
+				<p id="rev"><a href="{{ url_for('fetchnegative') }}">View Reviews</a></p>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<p id="posi">{{ positivetext }}</p>
+<p id="negi">{{ negativetext }}</p>
+<!--<script>
+	function displayposi(){
+		document.getElementById("posi").innerHTML = '"'+{{ positivetext }}+ '"';
+	}
+	function displaynegi(){
+		document.getElementById("negi").innerHTML = '"'+{{ negativetext }}+"'";
+	}
+	displayposi();
+	displaynegi();
+</script>-->
+
+
+<div id="reviewbox">
+	<button id="close" onclick="showReview(0)">X</button>
+	<form action="{{ url_for('predict')}}" method="POST">
+		<input type="text" name="review" placeholder="Enter Your Review Here..."><br>
+		<button id="but1" type="submit">Submit</button>
+	</form>
+	<div id="result">
+		<script>
+			showReview({{ showReview}});
+		</script>
+		<p id="pos">{{ prediction_text }}</p>
+		<p id="msg">{{ thankyou_text }}</p>
+	</div>
+</div>
+
+</body>
+</html>
